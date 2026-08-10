@@ -90,64 +90,28 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
-struct UF
-{
-	int n;
-	vi c, sz;
 
 
-	UF(int n): n(n)
+void solve(int T){
+	int n; cin >> n;
+
+	vi dp (n+1,0);
+
+	dp[0] = 1;
+	const vi dices = {1,2,3,4,5,6};
+
+	fr(i,1,n+1)
 	{
-		c.resize(n); sz.resize(n,1);
-		iota(c.begin(),c.end(),0);
+		for (auto dice : dices)
+		{
+			if (i-dice >= 0)
+			{
+				dp[i] = (dp[i] +dp[i-dice]) % mod;
+			}
+		}
+	};
 
-	}
-
-	int find(int x) {return c[x] == x ? x : c[x] = find(c[x]);}
-
-	int merge(int a, int b)
-	{
-		int par_a = find(a);
-		int par_b = find(b);
-
-		if (par_a == par_b) return 0;
-		if (sz[par_a] > sz[par_b]) swap(par_a, par_b);
-		c[par_a] = par_b;
-		sz[par_b] += sz[par_a];
-
-
-		return 1;
-	}
-};
-
-void solve(int T)
-{
-	int n, m; cin >> n >> m;
-
-	vvi adj(n,vi());
-	UF uf(n);
-
-	fr(i,0,m)
-	{
-		int u, v; cin >> u >> v; u--; v--;
-		adj[u].pb(v);
-		adj[v].pb(u);
-		uf.merge(u,v);
-	}
-
-
-	vpii ans;
-	fr(i,0,n-1)
-	{
-		if (uf.merge(i,i+1) == 1) ans.emplace_back(i,i+1);
-	}
-
-	cout << ans.size() << '\n';
-	for (auto [u,v] : ans)
-	{
-		cout << u + 1 << ' ' << v + 1 << '\n';
-	}
-
+	cout << dp[n] << '\n';
 
 }
 
