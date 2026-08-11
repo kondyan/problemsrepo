@@ -90,32 +90,63 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
+struct UF
+{
+	int n;
+	vi c, sz;
 
+	UF(int n): n(n)
+	{
+		c.resize(n); sz.resize(n,1);
+		iota(c.begin(), c.end(),0);
+	}
+
+	int find(int x) { return c[x] == x ? x : c[x] = find(c[x]);};
+	void unite(int a, int b) {
+		int par_a = find(a);
+		int par_b = find(b);
+
+		if (par_a == par_b) return;
+		if (sz[par_a] > sz[par_b]) swap(par_a,par_b);
+		c[par_a] = par_b;
+		sz[par_b]+=sz[par_a];
+
+
+	}
+};
 
 void solve(int T){
-	int n, x; cin >> n >> x;
-	vi coins(n);
-	fr(i,0,n) cin >> coins[i];
+	int n, m; cin >> n >> m;
+	UF g1(n);
+	UF g2(n);
+	vi ans(n);
+	vector<unordered_set<int>> friends(n);
 
-	vi dp(x+1,0);
-	dp[0] = 1;
-	fr(i,1,x+1)
+	fr(i,0,m)
 	{
-		for (auto coin : coins)
-		{
-			if (i - coin >= 0)
-			{
-				dp[i] = (dp[i] + (dp[i-coin])) %mod;
- 			}
-		}
+		int a, b; cin >> a >> b; a--; b--;
+		friends[a].insert(b);
+		friends[b].insert(a);
 	}
 
 
-	cout << dp[x] << '\n';
+	fr(i,0,n)
+	{
+			g1.unite(i,*friends[i].begin());
+			for (auto f : friends[i])
+			{
+				int g1contains = g1.c[f] != f;
+				int g2contains = g2.c[f] != f;
 
 
+			}
+	}
 
-
+	fr(i,0,n)
+	{
+		cout << ans[i]<< ' ';
+	}
+	cout << '\n';
 
 
 }

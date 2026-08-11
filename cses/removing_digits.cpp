@@ -93,27 +93,9 @@ const int mod = 1000000007;
 
 
 void solve(int T){
-	int n, x; cin >> n >> x;
-	vi coins(n);
-	fr(i,0,n) cin >> coins[i];
+	int n; cin >> n;
 
-	vi dp(x+1,0);
-	dp[0] = 1;
-	fr(i,1,x+1)
-	{
-		for (auto coin : coins)
-		{
-			if (i - coin >= 0)
-			{
-				dp[i] = (dp[i] + (dp[i-coin])) %mod;
- 			}
-		}
-	}
-
-
-	cout << dp[x] << '\n';
-
-
+	
 
 
 

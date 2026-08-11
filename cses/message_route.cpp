@@ -90,31 +90,81 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
+deque<int> bfs(vvi &adj, int n)
+{
+	vi vis(n,0);
+	vi history(n,-1);
 
+	deque<int> ans;
+	queue<pair<int, int>> q;
 
-void solve(int T){
-	int n, x; cin >> n >> x;
-	vi coins(n);
-	fr(i,0,n) cin >> coins[i];
-
-	vi dp(x+1,0);
-	dp[0] = 1;
-	fr(i,1,x+1)
+	q.push({0,-1});
+	while (!q.empty())
 	{
-		for (auto coin : coins)
+		int node = q.front().first;
+		int parent_node = q.front().second;
+		q.pop();
+
+		if (vis[node]) continue;
+		vis[node] = 1;
+		history[node] = parent_node;
+
+		if (node == n-1)
 		{
-			if (i - coin >= 0)
+			int curr_node = node;
+			int history_par = history[curr_node];
+
+			while (history_par != -1)
 			{
-				dp[i] = (dp[i] + (dp[i-coin])) %mod;
- 			}
+				ans.push_front(curr_node);
+				curr_node = history_par;
+				history_par = history[curr_node];
+			}
+			return ans;
 		}
+
+
+
+		for (auto child : adj[node])
+		{
+			q.push({child,node});
+		}
+
+
+
 	}
 
+	return ans;
+}
 
-	cout << dp[x] << '\n';
+void solve(int T){
+
+	int n, m; cin >> n >> m;
+	vvi adj(n, vi());
+	fr(i,0,m)
+	{
+		int a, b; cin >> a >> b; a--; b--;
+		adj[a].pb(b);
+		adj[b].pb(a);
+	}
+
+	deque<int> ans = bfs(adj,n);
 
 
+	if (ans.empty())
+	{
+		cout << "IMPOSSIBLE" << '\n';
+		return;
+	}
 
+	ans.push_front(0);
+
+	cout << ans.size() << '\n';
+	for (auto el : ans)
+	{
+		cout << el + 1 << ' ';
+	}
+	cout << '\n';
 
 
 
