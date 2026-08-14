@@ -37,6 +37,8 @@ void setmax(auto &x, auto y) {if (y > x) x = y;}
 
 using pii = pair<int,int>;
 using vpii = vector<pii>;
+using vvpii = vector<vpii>;
+
 
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 // *find_by_order, order_of_key

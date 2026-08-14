@@ -90,61 +90,46 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
-struct UF
+int flag = 0;
+void dfs(vvi &adj, vi &vis, int u, int color)
 {
-	int n;
-	vi c, sz;
+	if (vis[u]) return;
+	vis[u] = color;
 
-	UF(int n): n(n)
+	for (auto v : adj[u])
 	{
-		c.resize(n); sz.resize(n,1);
-		iota(c.begin(), c.end(),0);
+		if (vis[v] == color) flag = 1;
+		dfs(adj,vis,v,color == 1 ? 2 : 1);
 	}
 
-	int find(int x) { return c[x] == x ? x : c[x] = find(c[x]);};
-	void unite(int a, int b) {
-		int par_a = find(a);
-		int par_b = find(b);
-
-		if (par_a == par_b) return;
-		if (sz[par_a] > sz[par_b]) swap(par_a,par_b);
-		c[par_a] = par_b;
-		sz[par_b]+=sz[par_a];
-
-
-	}
-};
+}
 
 void solve(int T){
 	int n, m; cin >> n >> m;
-	UF g1(n);
-	UF g2(n);
+
 	vi ans(n);
-	vector<unordered_set<int>> friends(n);
+	vvi adj(n,vi());
+	vi vis(n,0);
 
 	fr(i,0,m)
 	{
 		int a, b; cin >> a >> b; a--; b--;
-		friends[a].insert(b);
-		friends[b].insert(a);
+		adj[a].pb(b);
+		adj[b].pb(a);
 	}
-
-
 	fr(i,0,n)
 	{
-			g1.unite(i,*friends[i].begin());
-			for (auto f : friends[i])
-			{
-				int g1contains = g1.c[f] != f;
-				int g2contains = g2.c[f] != f;
-
-
-			}
+		dfs(adj,vis,i,1);
 	}
 
+	if (flag)
+	{
+		cout << "IMPOSSIBLE" << '\n';
+		return;
+	}
 	fr(i,0,n)
 	{
-		cout << ans[i]<< ' ';
+		cout << vis[i]<< ' ';
 	}
 	cout << '\n';
 

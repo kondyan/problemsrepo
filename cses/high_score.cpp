@@ -37,6 +37,7 @@ void setmax(auto &x, auto y) {if (y > x) x = y;}
 
 using pii = pair<int,int>;
 using vpii = vector<pii>;
+using vvpii = vector<vpii>;
 
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 // *find_by_order, order_of_key
@@ -94,58 +95,84 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
+bool dfs(vvi &adj, vi &vis, int n, int u)
+{
+	if (vis[u]) return false;
+	vis[u] = 1;
 
+	if (u == n-1) return true;
+
+	for (auto v : adj[u])
+	{
+		if (dfs(adj,vis,n,v)) return true;
+	}
+	return false;
+}
+
+vi bellman_ford(vvi &edges, vvi &adj, int n)
+{
+	vi dist(n,-inf);
+	vi vis(n, 0);
+	dist[0] = 0;
+
+
+	fr(i,0,n)
+	{
+		for (auto edge : edges)
+		{
+			int u = edge[0];
+			int v = edge[1];
+			int wt = edge[2];
+
+
+
+			if (dist[u] != -inf && dist[u] + wt > dist[v])
+			{
+
+				if (i == n-1)
+				{
+					if (dfs(adj,vis,n,u)  || dfs(adj,vis,n,v)) return {-1};
+				};
+
+				dist[v] = dist[u] + wt;
+			}
+		}
+	}
+
+
+	return dist;
+}
+
+
+
+void solve(int T)
+{
+	int n, m; cin >> n >> m;
+	vvi edges(m,vi());
+	vvi adj(n,vi());
+	fr(i,0,m)
+	{
+		int a,b,c;cin >> a >> b >> c; a--; b--;
+		edges[i] = {a,b,c};
+		adj[a].pb(b);
+	}
+
+
+
+	vi ans = bellman_ford(edges,adj, n);
+	if (ans.size() == 1 && ans[0] == -1)
+	{
+		cout << -1 << '\n';
+		return;
+	}
+
+	cout << ans[n-1] << '\n';
+}
 
 signed main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 
-	/*
-make observation about the transition by
-drawing out all the possible ways for n = 2
-and marking non-existing vertical middle lines
-as orange 'x' and existing ones with green 'x'
-
-
-we have dp[i][0] = ways to go from i-1 th row
-to the i-th row when every block is closed below,
-alternatively you can say, that this is the ways to
-transition to an orange 'x' / horizontal block from
-below
-
-we also have dp[i][1] = ways to go from i-1 th row to
-the i-th row such that the i-th row has a vertical line
-in the middle, alternatively you can say that this is
-the ways to transition to a green 'x' / vertical blocks
-from below
-	 */
-
-	vvi dp(1000002,vi(2,0));
-	dp[1][1] = 1; dp[1][0] = 1;
-
-	fr(i,1,1000000)
-	{
-		dp[i][0] %= mod;
-		dp[i][1] %= mod;
-		// 2 ways to come from an orange 'x' to an orange 'x'
-		dp[i+1][0] += 2*dp[i][0];
-
-		// 1 way to come from green 'x' to an orange 'x'
-		dp[i+1][0] +=	dp[i][1];
-
-		// 1 way to come from an orange 'x' to a green 'x'
-		dp[i+1][1] += dp[i][0];,
-
-		// 4 ways to come from a green 'x' to a green 'x'
-		dp[i+1][1] += 4*dp[i][1];
-	}
-
-	int T = 1;
-	cin >> T;
-	for (int i = 1; i <= T; i++)
-	{
-		int n; cin >> n;
-		cout << (dp[n][0] + dp[n][1]) %mod << '\n';
-	}
+	solve(0);
 }
