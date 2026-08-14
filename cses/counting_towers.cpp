@@ -95,36 +95,57 @@ const int inf = 1e18;
 const int mod = 1000000007;
 
 
-void solve(int T)
-{
-	int n, x; cin >> n >> x;
-	vpii books(n, mp(-1,-1));
-	fr(i,0,n) cin >> books[i].ff;
-	fr(i,0,n) cin >> books[i].ss;
-
-	vi dp(x + 1, 0);
-
-		for (auto [pages, price] : books)
-		{
-			rfr(i,x,0)
-			{
-				if (i - pages >= 0)
-				{
-					setmax(dp[i],dp[i-pages] + price);
-				}
-				}
-	}
-
-	cout << dp[x] << '\n';
-
-}
 
 signed main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 
+	/*
+make observation about the transition by
+drawing out all the possible ways for n = 2
+and marking non-existing vertical middle lines
+as orange 'x' and existing ones with green 'x'
 
-	solve(1);
 
+we have dp[i][0] = ways to go from i-1 th row
+to the i-th row when every block is closed below,
+alternatively you can say, that this is the ways to
+transition to an orange 'x' / horizontal block from
+below
+
+we also have dp[i][1] = ways to go from i-1 th row to
+the i-th row such that the i-th row has a vertical line
+in the middle, alternatively you can say that this is
+the ways to transition to a green 'x' / vertical blocks
+from below
+	 */
+
+	vvi dp(1000002,vi(2,0));
+	dp[1][1] = 1; dp[1][0] = 1;
+
+	fr(i,1,1000000)
+	{
+		dp[i][0] %= mod;
+		dp[i][1] %= mod;
+		// 2 ways to come from an orange 'x' to an orange 'x'
+		dp[i+1][0] += 2*dp[i][0];
+
+		// 1 way to come from green 'x' to an orange 'x'
+		dp[i+1][0] +=	dp[i][1];
+
+		// 1 way to come from an orange 'x' to a green 'x'
+		dp[i+1][1] += dp[i][0];
+
+		// 4 ways to come from a green 'x' to a green 'x'
+		dp[i+1][1] += 4*dp[i][1];
+	}
+
+	int T = 1;
+	cin >> T;
+	for (int i = 1; i <= T; i++)
+	{
+		int n; cin >> n;
+		cout << (dp[n][0] + dp[n][1]) %mod << '\n';
+	}
 }
