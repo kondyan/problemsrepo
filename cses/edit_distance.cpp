@@ -101,25 +101,27 @@ const int mod = 1000000007;
 
 void solve(int T)
 {
-	int n; cin >> n;
+	string s1, s2; cin >> s1 >> s2;
+	int n = s1.size(); int m = s2.size();
 
-	vi dp(n+1,0);
-
+	vvi dp (n+1, vi(m+1,0));
 
 	fr(i,1,n+1)
 	{
-		if (i <= 0){ dp[i] = 1; continue;};
-
-		string num = to_string(i);
-		int maxc = -1;
-		for (auto c : num)
+		fr(j,1,m+1)
 		{
-			setmax(maxc,c - '0');
+			setmax(dp[i][j],dp[i-1][j]);
+			setmax(dp[i][j], dp[i][j-1]);
+			if (s1[i-1] == s2[j-1])
+			{
+				setmax(dp[i][j],dp[i-1][j-1] + 1);
+			}
 		}
-		dp[i] = dp[i-maxc] + 1;
 	}
 
-	cout << dp[n] << '\n';
+	int res = max(n,m);
+	res -= dp[n][m];
+	cout << res << '\n';
 }
 
 signed main()
@@ -131,3 +133,4 @@ signed main()
 		solve(1);
 
 }
+
