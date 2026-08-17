@@ -104,15 +104,51 @@ void solve(int T)
 
 }
 
+vvi read_task_time_table()
+{
+	int N; cin >> N;
+	vvi task_time_table(N, vi(7));
+	fr(i,0,N)
+	{
+		fr(j,0,7)
+		{
+			cin >> task_time_table[i][j];
+		}
+	}
+
+	return task_time_table;
+}
+
 signed main()
 {
 	ios_base::sync_with_stdio(false);
-	cin.tie(0);
 
-	int T = 1;
-	cin >> T;
-	for (int i = 1; i <= T; i++)
-	{
-		solve(i);
-	}
+	int K, S, latency_in_ms; cin >> K >> S >> latency_in_ms;
+	double bandwidth_gbps, bytes_per_token, num_layers, SLO1, SLO2, tp_UB, tp_base, dist_base, w_tp, w_c; cin >> bandwidth_gbps >> bytes_per_token >> num_layers >> SLO1 >> SLO2 >> tp_UB >> tp_base >> dist_base >> w_tp >> w_c;
+
+	/*
+	 * SLO = Service level objective
+	 * SLO1 = TDR target
+	 * SLO2 = TPOT target
+	 * bandwidth_gbps is in gigabits per second (Gb/s)
+	 * bytes_per_token is already complete
+	 *
+	 *
+	 *
+	 * task time table structure
+	 *
+	 * 7 rows and cols are
+	 * batch_size prefill_pre prefill_proc prefill_post
+	 * decode_pre decode_proc decode_post
+	 *
+	 * batch_size = number of requests grouped into one task
+	 * prefill = input stage
+	 * decode = output stage
+	 * 
+	 */
+
+
+
+	vvi task_time_table = read_task_time_table();
+
 }

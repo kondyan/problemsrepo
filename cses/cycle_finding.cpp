@@ -98,9 +98,78 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
+deqi bellman_ford(vvi &edges, vvpii&adj, int n )
+{
+	vi dist(n,inf);
+	vi p(n,-1);
+	int x = -1;
+	fr(i,0,n)
+	{
+		for (auto edge : edges)
+		{
+			int u = edge[0];
+			int v = edge[1];
+			int wt = edge[2];
+
+			if (dist[v] > dist[u] + wt)
+			{
+				if (i == n-1)
+				{
+					x = v;
+				}
+				dist[v] = dist[u] + wt;
+				p[u] =v;
+			}
+		}
+	}
+
+	if (x == -1)
+	{
+		return {};
+	} else
+	{
+		fr(i,0,n)
+		{
+			if (x != -1) x = p[x];
+		}
+
+		vi cycle;
+		for (int v = x;; v = p[v])
+		{
+			cycle.pb(v);
+			if (v == x && cycle.size() > 1) break;
+		}
+	}
+}
+
 
 void solve(int T)
 {
+	int n, m; cin >> n >>m;
+	vvi edges(m,vi());
+	vvpii adj(n,vpii());
+	fr(i,0,m)
+	{
+		int a, b, c; cin >> a >> b >> c; a--; b--;
+		edges[i] = {a,b,c};
+		adj[a].pbp(b,c);
+	}
+
+	deqi ans = bellman_ford(edges, adj,n);
+
+	if (ans.empty())
+	{
+		cout << "NO" << '\n';
+	} else
+	{
+		cout << "YES" << '\n';
+		for (auto el : ans)
+		{
+			cout << el + 1 << ' ';
+		}
+		cout << '\n';
+	}
+
 
 }
 
@@ -110,9 +179,6 @@ signed main()
 	cin.tie(0);
 
 	int T = 1;
-	cin >> T;
-	for (int i = 1; i <= T; i++)
-	{
-		solve(i);
-	}
+	solve(0);
+
 }
