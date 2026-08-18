@@ -98,11 +98,12 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
-deqi bellman_ford(vvi &edges, vvpii&adj, int n )
+vi bellman_ford(vvi &edges, vvpii&adj, int n )
 {
 	vi dist(n,inf);
 	vi p(n,-1);
 	int x = -1;
+	dist[0] = 0;
 	fr(i,0,n)
 	{
 		for (auto edge : edges)
@@ -111,13 +112,13 @@ deqi bellman_ford(vvi &edges, vvpii&adj, int n )
 			int v = edge[1];
 			int wt = edge[2];
 
-			if (dist[v] > dist[u] + wt)
+			if (dist[v] + wt < dist[u])
 			{
 				if (i == n-1)
 				{
 					x = v;
 				}
-				dist[v] = dist[u] + wt;
+				dist[u] = dist[v] + wt;
 				p[u] =v;
 			}
 		}
@@ -139,7 +140,10 @@ deqi bellman_ford(vvi &edges, vvpii&adj, int n )
 			cycle.pb(v);
 			if (v == x && cycle.size() > 1) break;
 		}
+		return cycle;
+
 	}
+
 }
 
 
@@ -155,7 +159,7 @@ void solve(int T)
 		adj[a].pbp(b,c);
 	}
 
-	deqi ans = bellman_ford(edges, adj,n);
+	vi ans = bellman_ford(edges, adj,n);
 
 	if (ans.empty())
 	{
