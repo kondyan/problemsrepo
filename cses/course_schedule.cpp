@@ -90,12 +90,53 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
-int cycle_end = -1;
+
+bool dfs(vvi &adj, vi &vis, vi &currSearch,vi &toposorted, int i)
+{
+	if (currSearch[i]) return true;
+	if (vis[i]) return false;
+	vis[i] = 1;
+	currSearch[i] = 1;
+
+	for (auto u : adj[i])
+	{
+		if (dfs(adj,vis,currSearch,toposorted,u)) return true;
+	}
+
+	currSearch[i] =0;
+	toposorted.pb(i);
+	return false;
+}
+vi toposort (vvi &adj, int n)
+{
+	vi vis(n,0);
+	vi currSearch(n,0);
+	vi toposorted;
+	fr(i,0,n)
+	{
+		if (!vis[i] && dfs(adj,vis,currSearch,toposorted,i)) return {};
+	}
 
 
+	return toposorted;
+}
 
 void solve(int T) {
+	int n, m; cin >> n >> m;
+	vvi adj(n,vi());
+	fr(i,0,m) { int a, b; cin >> a >> b; a--; b--; adj[b].pb(a);}
+	vi ans = toposort(adj,n);
+	if (ans.empty())
+	{
+		cout << "IMPOSSIBLE" << '\n';
+		return;
+	}
 
+	for (auto v : ans)
+	{
+		cout << v + 1 << ' ';
+	}
+	cout << '\n';
 
 }
 
