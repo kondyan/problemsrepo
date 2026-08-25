@@ -100,10 +100,54 @@ const double PI = 3.1415926535;
 const int inf = 1e18;
 const int mod = 1000000007;
 
+int dijkstra(vvpii &adj, int n)
+{
+	vvi dist(n,vi(2,inf));
+	priority_queue<pipii, vpipii, greater<pipii>> pq;
+	pq.push({0,{0,0}});
+
+	while (!pq.empty())
+	{
+		int d = pq.top().first;
+		int v = pq.top().second.first;
+		int s = pq.top().second.second;
+		pq.pop();
+
+		if (dist[v][s] != inf)  continue;
+		dist[v][s] = d;
+
+		for (auto [u,c] : adj[v])
+		{
+			if (s == 0)
+			{
+				int cm =  floor(c / 2);
+
+				pq.push({d + cm, {u,1}});
+				pq.push({d + c, {u,0}});
+
+			} else
+			{
+				pq.push({d + c, {u,1}});
+			};
+		}
+	}
+
+	return min(dist[n-1][0], dist[n-1][1]);
+}
 
 void solve(int T)
 {
+	int n, m; cin >> n >> m;
+	vvpii adj(n,vpii());
+	fr(i,0,m)
+	{
+		int a, b, c; cin >> a >> b >> c; a--; b--;
+		// unidirectional
+		adj[a].pbp(b,c);
+	}
 
+	int ans = dijkstra(adj,n);
+	cout << ans << '\n';
 }
 
 signed main()
@@ -111,10 +155,5 @@ signed main()
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 
-	int T = 1;
-	cin >> T;
-	for (int i = 1; i <= T; i++)
-	{
-		solve(i);
-	}
+	solve(0);
 }
