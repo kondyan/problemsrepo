@@ -100,85 +100,82 @@ const double PI = 3.1415926535;
 const int inf = 1e9;
 const int mod = 1000000007;
 
-int rec(vi &a, vvpii&dp, int n, int sum, int totalSum)
-{
-	if (n == 0)
-	{
-		return abs(abs(totalSum - sum) - sum);
-	}
-	if (dp[n][sum].first != inf)
-	{
-		return dp[n][sum].first;
-	}
-
-	int inc = dp[n-1][sum + a[n-1]].first;
-	int exc = dp[n-1][sum].first;
-	if (dp[n-1][sum + a[n-1]].first == inf)
-	{
-		dp[n-1][sum + a[n-1]].second = dp[n][sum].second;
-		dp[n-1][sum + a[n-1]].second ^= (1 << (n-1));
-		inc = rec(a,dp,n-1,sum + a[n-1],totalSum);
-	};
-
-	if (dp[n-1][sum].first == inf)
-	{
-		dp[n-1][sum].second = dp[n][sum].second;
-		exc = rec(a,dp,n-1,sum,totalSum);
-
-	}
-
-
-	if (inc < exc)
-	{
-		dp[n][sum].second = dp[n-1][sum+a[n-1]].second;
-	} else
-	{
-		dp[n][sum].second = dp[n-1][sum].second;
-	}
-	return dp[n][sum].first = min(inc,exc);
-
-
-
-}
 
 void solve(int T)
 {
-	int f; cin >> f;
-	int n; cin >> n;
+	int c, n; cin >> c >> n;
 	int sum = 0;
-	vi a(n); fr(i,0,n) {cin >> a[i]; sum+=a[i];};
 
-	vvpii dp(n+1,vpii(sum+1,{inf,0}));
+	vi a(n);
+	fr(i,0,n) {cin >> a[i]; sum+=a[i];};
 
-	int ans = rec(a,dp,n,0,sum);
-	int mask = dp[n][0].second;
+	vvi dp(n+1,vi(sum+1,0));
+
+	fr(i,0,n+1)
+	{
+		dp[i][0]=1;
+	}
+
+	fr(i,1,n+1)
+	{
+		fr(j,0,sum + 1)
+		{
+			if (j - a[i-1] < 0) continue;
+			dp[i][j] = dp[i-1][j] || dp[i-1][j-a[i-1]];
+		}
+	}
+
+	int ans = inf;
+	int subset_sum =0;
+	fr(j,0, sum+1)
+	{
+		if (dp[n][j])
+		{
+			int x =abs((sum - j)-j);
+			setmin(ans,x);
+			if (ans ==x )subset_sum = sum-j;
+		}
+	}
+
+	vi ans_arr;
+
+	int i = n;
+	int j = subset_sum;
+	while (i != 0 && j != 0)
+	{
+		if (dp[i-1][j])
+		{
+			i--;
+		} else
+		{
+			ans_arr.pb(a[i-1]);
+			i--;
+			j-=a[i];
+		}
+
+	}
+
+
+
+
 
 
 	cout << ans << ' ';
 
-	if (f == 2)
+
+
+	if (c == 2)
 	{
-		vi first;
 
-		fr(i,0,n)
+
+		cout << ans_arr.size() << '\n';
+		for (auto el : ans_arr)
 		{
-
-			if (mask & (1 << i))
-			{
-				first.pb(a[i]);
-			}
-
+			cout << el << ' ';
 		}
-
-
-		cout << first.size() << '\n';
-
-		fr(i,0,first.size())
-		{
-			cout << first[i] << ' ';
-		}
-
+		cout << '\n';
 	}
+
 
 
 
